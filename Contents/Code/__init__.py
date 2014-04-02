@@ -1,3 +1,5 @@
+import random
+
 NAME = 'South Park'
 BASE_URL = 'http://www.southparkstudios.com'
 GUIDE_URL = 'http://www.southparkstudios.com/full-episodes'
@@ -17,8 +19,8 @@ def MainMenu():
 
 	oc = ObjectContainer(no_cache=True)
 
-	oc.add(VideoClipObject(
-		url = RandomEpisode(),
+	oc.add(DirectoryObject(
+		key = Callback(RandomEpisode),
 		title = L('RANDOM_TITLE')
 	))
 
@@ -69,16 +71,46 @@ def Episodes(title, season):
 		return oc
 
 ###################################################################################################
+#@indirect
 @route('/video/southpark/episodes/random')
 def RandomEpisode():
 
-	try:
-		page = HTTP.Request(RANDOM_URL, follow_redirects=False).content
-	except Ex.RedirectError, e:
-		if 'Location' in e.headers:
-			url = e.headers['Location']
-
-			if url[0:4] != 'http':
-				url = '%s%s' % (BASE_URL, url)
-
-			return unicode(url)
+	#try:
+	#	page = HTTP.Request(RANDOM_URL, follow_redirects=False).content
+	#except Ex.RedirectError, e:
+	#	if 'Location' in e.headers:
+	#		url = e.headers['Location']
+	#
+	#		if url[0:4] != 'http':
+	#			url = '%s%s' % (BASE_URL, url)
+	#
+	#		return unicode(url)
+	
+	oc = ObjectContainer()
+	
+	num_seasons = len(HTML.ElementFromURL(GUIDE_URL).xpath('//li/a[contains(@href, "full-episodes/season-")]'))
+	season = random.randint(1,int(num_seasons))
+	
+	counter = 0
+	
+	eps = JSON.ObjectFromURL(SEASON_JSON_URL % season)['season']['episode']
+	
+	for episode in eps:
+		if episode['available'] != 'true':
+			continue
+		counter += 1
+		
+	episode = eps[random.randint(1,counter)]
+	
+	oc.add(EpisodeObject(
+		url = unicode(episode['url']),
+		title = episode['title'],
+		summary = episode['description'],
+		originally_available_at = Datetime.ParseDate(episode['airdate']),
+		index = int(episode['episodenumber'][-2:]),
+		thumb = episode['thumbnail'].split('?')[0],
+		show = NAME,
+		season = int(season),
+	))
+	
+	return oc
