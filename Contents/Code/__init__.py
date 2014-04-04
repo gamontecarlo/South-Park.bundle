@@ -74,20 +74,6 @@ def Episodes(title, season):
 #@indirect
 @route('/video/southpark/episodes/random')
 def RandomEpisode():
-
-	#try:
-	#	page = HTTP.Request(RANDOM_URL, follow_redirects=False).content
-	#except Ex.RedirectError, e:
-	#	if 'Location' in e.headers:
-	#		url = e.headers['Location']
-	#
-	#		if url[0:4] != 'http':
-	#			url = '%s%s' % (BASE_URL, url)
-	#
-	#		return unicode(url)
-	
-	oc = ObjectContainer()
-	
 	num_seasons = len(HTML.ElementFromURL(GUIDE_URL).xpath('//li/a[contains(@href, "full-episodes/season-")]'))
 	season = random.randint(1,int(num_seasons))
 	
@@ -102,15 +88,7 @@ def RandomEpisode():
 		
 	episode = eps[random.choice(episodeList)]
 	
-	oc.add(EpisodeObject(
+	return IndirectResponse(VideoClipObject,
 		url = unicode(episode['url']),
-		title = episode['title'],
-		summary = episode['description'],
-		originally_available_at = Datetime.ParseDate(episode['airdate']),
-		index = int(episode['episodenumber'][-2:]),
-		thumb = episode['thumbnail'].split('?')[0],
-		show = NAME,
-		season = int(season),
-	))
-	
-	return oc
+		key = unicode(episode['url']),
+	)
