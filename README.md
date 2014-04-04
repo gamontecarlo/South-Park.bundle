@@ -5,4 +5,4 @@ If the software submitted to this repository accesses or calls any software prov
 
 What the hell is this even?
 -------
-On the new Plex, the layout changes when you move the focus off the random episode. This version fixes it, and also gives you two random episodes for the price of one! Isn't that amazing?
+On the new Plex, the layout changes when you move the focus off the random episode. This version fixes it, and also gives you two random episodes for the price of just one! Isn't that amazing?
