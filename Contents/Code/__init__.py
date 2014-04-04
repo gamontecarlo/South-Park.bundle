@@ -91,16 +91,16 @@ def RandomEpisode():
 	num_seasons = len(HTML.ElementFromURL(GUIDE_URL).xpath('//li/a[contains(@href, "full-episodes/season-")]'))
 	season = random.randint(1,int(num_seasons))
 	
-	counter = 0
+	episodeList = list()
 	
 	eps = JSON.ObjectFromURL(SEASON_JSON_URL % season)['season']['episode']
 	
-	for episode in eps:
+	for index, episode in enumerate(eps):
 		if episode['available'] != 'true':
 			continue
-		counter += 1
+		episodeList.append(index)
 		
-	episode = eps[random.randint(1,counter)]
+	episode = eps[random.choice(episodeList)]
 	
 	oc.add(EpisodeObject(
 		url = unicode(episode['url']),
