@@ -7,6 +7,6 @@ What the hell is this even?
 -------
 On the new Plex, the layout changes when you move the focus off the random episode. This version fixes it, and also gives you two random episodes for the price of just one! Isn't that amazing?
 
-What will it be... blue? Or red? Who gives a shit, it's just a workaround for the limitations of the Plex plugin framework anyways.
+What will it be... blue? Or red? Maybe the standby button instead? Who knows!
 
-Enjoy your random episode.
+Find out what color you are and enjoy your random episode.
