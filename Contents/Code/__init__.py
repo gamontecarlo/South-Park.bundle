@@ -74,21 +74,33 @@ def Episodes(title, season):
 #@indirect
 @route('/video/southpark/episodes/random')
 def RandomEpisode():
-	num_seasons = len(HTML.ElementFromURL(GUIDE_URL).xpath('//li/a[contains(@href, "full-episodes/season-")]'))
-	season = random.randint(1,int(num_seasons))
+	oc = ObjectContainer()
 	
-	episodeList = list()
+	for x in range(0, 2):
+		num_seasons = len(HTML.ElementFromURL(GUIDE_URL).xpath('//li/a[contains(@href, "full-episodes/season-")]'))
+		season = random.randint(1,int(num_seasons))
 	
-	eps = JSON.ObjectFromURL(SEASON_JSON_URL % season)['season']['episode']
+		episodeList = list()
 	
-	for index, episode in enumerate(eps):
-		if episode['available'] != 'true':
-			continue
-		episodeList.append(index)
+		eps = JSON.ObjectFromURL(SEASON_JSON_URL % season)['season']['episode']
+	
+		for index, episode in enumerate(eps):
+			if episode['available'] != 'true':
+				continue
+			episodeList.append(index)
 		
-	episode = eps[random.choice(episodeList)]
+		episode = eps[random.choice(episodeList)]
 	
-	return IndirectResponse(VideoClipObject,
-		url = unicode(episode['url']),
-		key = unicode(episode['url']),
-	)
+
+		oc.add(EpisodeObject(
+			url = unicode(episode['url']),
+			title = episode['title'],
+			summary = episode['description'],
+			originally_available_at = Datetime.ParseDate(episode['airdate']),
+			index = int(episode['episodenumber'][-2:]),
+			thumb = episode['thumbnail'].split('?')[0],
+			show = NAME,
+			season = int(season),
+		))
+	
+	return oc
